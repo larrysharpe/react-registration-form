@@ -1,2 +1,2 @@
-import Registration from './Registration';
-export default Registration;
+import App from './App';
+export default App;

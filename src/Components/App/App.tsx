@@ -1,10 +1,11 @@
 import React from 'react';
+import Registration from "../Registration";
 
 function App() {
   return (
-    <div>
-     App
-    </div>
+    <>
+        <Registration/>
+    </>
   );
 }
 
