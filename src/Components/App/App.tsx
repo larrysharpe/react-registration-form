@@ -1,10 +1,13 @@
 import React from 'react';
 import Registration from "../Registration";
+import RegistrationContextProvider from "../Registration/registration.provider";
 
 function App() {
   return (
     <>
-        <Registration/>
+        <RegistrationContextProvider>
+            <Registration/>
+        </RegistrationContextProvider>
     </>
   );
 }

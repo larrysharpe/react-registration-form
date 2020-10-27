@@ -1,148 +1,84 @@
-import React from 'react';
-import Paper from '@material-ui/core/Paper/Paper';
+import React, {ChangeEvent, useContext, useEffect, useState} from 'react';
 import TextField from "@material-ui/core/TextField/TextField";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import {formFields, fieldsOrder} from "./config";
+import {defaultState} from "./type";
+import useStyles from "./styles";
+import RegistrationContext from "./registration.context";
 
 
-const Registration = ()  => {
-    const defaultState = {
-        account: '',
-        email: '',
-        emailErrorText: '',
-        password: '',
-        confirmPassword: '',
-        confirmPasswordErrorText: '',
-        telNum: '',
-    }
+const Registration = () => {
 
-    const [state, setState] = useState(defaultState);
+    const classes = useStyles();
 
-    const validateEmail = e => {
-        // regex from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(e);
-    }
+    const { fields, setFields, formState, errors } = useContext(RegistrationContext);
 
-    const getStyle = () => {
-        return {
-            height: 600,
-            width: 350,
-            margin: 20,
-            textAlign: 'center',
-            display: 'inline-block',
-        }
-    }
-
-    const _onSubmit = e => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
-
-        console.log("_onSubmit")
-        if (state.emailErrorText == '' && state.confirmPasswordErrorText == '') {
-            console.log("_onSubmit: state=", state)
-        } else {
-            console.log("has error, unable to submit")
-        }
     }
 
-    const _onReset = () => {
-        console.log("_onReset")
-        setState({
-            account: '',
-            email: '',
-            emailErrorText: '',
-            password: '',
-            confirmPassword: '',
-            confirmPasswordErrorText: '',
-            telNum: '',
-        })
+    const onReset = (): void => {
+        setFields(defaultState)
     }
 
-    const _handleAccountChange = (e, val) => {
-        setState({account: val})
+    const onChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
+        const {value, name} = e.target;
+        setFields((prev: any) => ({
+            ...prev,
+            [name]: value
+        }));
     }
 
-    const _handlePasswordChange = (e, val) => {
-        setState({password: val})
-    }
+    return (
+        <Grid container={true} justify="center">
+            <Grid xs={12} md={3} item={true}>
+                <img src="/images/availity-logo.png" />
+            </Grid>
+            <Grid xs={12} md={3} item={true}>
+                <h1>Get Availity Access</h1>
+                <p>Let our portal power your mission.</p>
+                <form onSubmit={onSubmit}>
 
-    const _handleConfirmPasswordChange = (e, val) => {
-        var errorText = ''
-        if (val != state.password) {
-            errorText = 'Passwords are not matched'
-        }
-        setState({confirmPassword: val, confirmPasswordErrorText: errorText})
-    }
-
-    const _handleEmailChange = (e, val) => {
-        var errorText = ''
-        if (!validateEmail(val)) {
-            errorText = "Email Format Error"
-        }
-        setState({emailErrorText: errorText, email: val})
-    }
-
-    const _handleInputChange = (telNumber, selectedCountry) => {
-        console.log('input changed. number: ', telNumber, 'selected country: ', selectedCountry);
-    }
-
-    const _handleInputBlur = (telNumber, selectedCountry) => {
-        console.log('Focus off the ReactTelephoneInput component. Tel number entered is: ', telNumber, ' selected country is: ', selectedCountry);
-        setState({telNum: telNumber})
-    }
-
-
-        return (
-            <Paper style={getStyle()}>
-                <p>Example of form validation built with React.</p>
-                <form onSubmit={_onSubmit.bind(this)}>
-
-
-                    <TextField
-                        value={state.account}
-                        onChange={_handleAccountChange.bind(this)}
-                        hintText="Account"
-                        floatingLabelText="Account"
-                        floatingLabelFixed={true}
-                    />
-                    <br />
-
-
-                    <TextField
-                        value={state.password}
-                        onChange={_handlePasswordChange.bind(this)}
-                        hintText="Password"
-                        floatingLabelText="Password"
-                        floatingLabelFixed={true}
-                        type="password"
-                    />
-                    <br />
-
-                    <TextField
-                        value={state.confirmPassword}
-                        errorText={state.confirmPasswordErrorText}
-                        onChange={_handleConfirmPasswordChange.bind(this)}
-                        hintText="Confirmed Password"
-                        floatingLabelText="Confirmed Password"
-                        floatingLabelFixed={true}
-                        type="password"
-                    />
-                    <br />
-
-                    <TextField
-                        value={state.email}
-                        errorText={state.emailErrorText}
-                        onChange={_handleEmailChange.bind(this)}
-                        hintText="Email"
-                        floatingLabelText="Email"
-                        floatingLabelFixed={true}
-                    />
+                    {fields && fieldsOrder.map((fieldName: string, index:number ) => {
+                        const field = formFields[fieldName];
+                        return <div key={index}>
+                            <TextField
+                                {...field}
+                                error={errors[fieldName] !== undefined}
+                                helperText={errors[fieldName] || ''}
+                                margin="dense"
+                                fullWidth={true}
+                                onChange={onChange}
+                                value={fields[field.name]}
+                                variant="filled"
+                            />
+                        </div>;
+                    })}
 
                     <div>
-                        <button type="submit">Submit</button>
-                        <button type="button" onClick={_onReset.bind(this)}>Reset</button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            className={classes.btnSubmit}
+                            disabled={formState && formState.submitDisabled}>
+                            Submit
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={onReset}
+                            color="secondary"
+                            type="submit"
+                            className={classes.btnReset}
+                            disabled={formState && formState.resetDisabled}>
+                            Reset
+                        </Button>
                     </div>
                 </form>
-            </Paper>
-        )
+            </Grid>
+        </Grid>
+    )
 }
 
 export default Registration;
