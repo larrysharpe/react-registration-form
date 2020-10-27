@@ -30,6 +30,10 @@ const Registration = () => {
         }));
     }
 
+    const onSubmit = () => {
+        /// id make api call here and update the state with the return
+    }
+
     return (
         <Grid container={true} justify="center">
             <Grid xs={12} md={3} item={true}>
