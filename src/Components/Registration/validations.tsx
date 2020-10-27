@@ -6,7 +6,7 @@ const email = {
     errorMessage: 'This must be a valid email'
 }
 const required = {
-    validationFn: (value: any): boolean => [undefined, null, ""].includes(value),
+    validationFn: (value: any): boolean => ![undefined, null, ""].includes(value),
     errorMessage: 'This is required'
 }
 

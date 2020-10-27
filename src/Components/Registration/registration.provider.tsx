@@ -15,23 +15,21 @@ const RegistrationContextProvider: FC<IProps> = props => {
     const [fields, setFields] = useState<IRegistrationContext>(RegistrationContextContextDefault);
     const [formState, setFormState] = useState({ resetDisabled: true, submitDisabled: true });
     const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
 
     const validate = () => {
         let resetDisabled = true;
         if (fields) {
             Object.keys(fields).forEach(key => {
-
                 // see if any fields have values, if so enable the reset btn
                 if (resetDisabled && ![null, '', undefined].includes(fields[key])) {
                     resetDisabled = false;
                 }
-
             });
             setFormState( prev => ({...prev, resetDisabled}))
         }
 
         // actual field validation goes here in conjunction with validations.tsx
-        console.log(fields)
         const errs:any  = {};   // started using any for time sake
         Object.keys(fields).forEach( field => {
             if (formFields[field] && formFields[field].validations) {
@@ -52,7 +50,7 @@ const RegistrationContextProvider: FC<IProps> = props => {
 
     return (
         <RegistrationContext.Provider
-            value={{ fields, setFields, formState, errors }}
+            value={{ fields, setFields, formState, errors, touched, setTouched }}
         >
             {children}
         </RegistrationContext.Provider>

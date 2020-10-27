@@ -12,15 +12,21 @@ const Registration = () => {
 
     const classes = useStyles();
 
-    const { fields, setFields, formState, errors } = useContext(RegistrationContext);
+    const { fields, setFields, formState, errors, touched, setTouched } = useContext(RegistrationContext);
+    const [showSuccessMsg, setShowSuccessMsg] = useState(false);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
+        setShowSuccessMsg(true);
         /// id make api call here and update the state with the return
     }
 
     const onReset = (): void => {
         setFields(defaultState)
+    }
+
+    const goBack = () => {
+        setShowSuccessMsg(false);
     }
 
     const onChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
@@ -31,6 +37,16 @@ const Registration = () => {
         }));
     }
 
+    const onBlur = (e: any): void => {
+        const {name} = e.currentTarget;
+        setTouched((prev: any) => ({
+            ...prev,
+            [name]: true
+        }));
+    }
+
+    const hasError = (field: string): boolean => touched[field] && errors[field] !== undefined;
+
     return (
         <Grid container={true} justify="center">
             <Grid xs={12} md={3} item={true}>
@@ -38,45 +54,64 @@ const Registration = () => {
             </Grid>
             <Grid xs={12} md={3} item={true}>
                 <h1>Get Availity Access</h1>
-                <p>Let our portal power your mission.</p>
-                <form onSubmit={onSubmit}>
 
-                    {fields && fieldsOrder.map((fieldName: string, index:number ) => {
-                        const field = formFields[fieldName];
-                        return <div key={index}>
-                            <TextField
-                                {...field}
-                                error={errors[fieldName] !== undefined}
-                                helperText={errors[fieldName] || ''}
-                                margin="dense"
-                                fullWidth={true}
-                                onChange={onChange}
-                                value={fields[field.name]}
-                                variant="filled"
-                            />
-                        </div>;
-                    })}
-
-                    <div>
+                { showSuccessMsg ? <>
+                    <h2>Thank You!</h2>
+                    <p>Your registration has been received please check you email for next steps.</p>
                         <Button
                             variant="contained"
                             color="primary"
-                            type="submit"
-                            className={classes.btnSubmit}
-                            disabled={formState && formState.submitDisabled}>
-                            Submit
+                            type="button"
+                            onClick={goBack}
+                            className={classes.btnSubmit}>
+                            Go Back
                         </Button>
-                        <Button
-                            variant="contained"
-                            onClick={onReset}
-                            color="secondary"
-                            type="submit"
-                            className={classes.btnReset}
-                            disabled={formState && formState.resetDisabled}>
-                            Reset
-                        </Button>
-                    </div>
-                </form>
+                </>
+                    :
+                <>
+                    <p>Let our portal power your mission.</p>
+                    <small>All Fields Are Required.</small>
+                    <form onSubmit={onSubmit}>
+
+                        {fields && fieldsOrder.map((fieldName: string, index:number ) => {
+                            const field = formFields[fieldName];
+                            return <div key={index}>
+                                <TextField
+                                    {...field}
+                                    name={fieldName}
+                                    error={hasError(fieldName)}
+                                    helperText={hasError(fieldName) ? errors[fieldName] : ''}
+                                    margin="dense"
+                                    fullWidth={true}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    value={fields[field.name]}
+                                    variant="filled"
+                                />
+                            </div>;
+                        })}
+
+                        <div>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                className={classes.btnSubmit}
+                                disabled={errors && Object.keys(errors).length > 0}>
+                                Submit
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={onReset}
+                                color="secondary"
+                                type="button"
+                                className={classes.btnReset}
+                                disabled={formState && formState.resetDisabled}>
+                                Reset
+                            </Button>
+                        </div>
+                    </form>
+                </>}
             </Grid>
         </Grid>
     )
