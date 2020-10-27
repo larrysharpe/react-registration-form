@@ -22,7 +22,7 @@ const Registration = () => {
     }
 
     const onReset = (): void => {
-        setFields(defaultState)
+        setFields((prev:any) => ({ ...defaultState }))
     }
 
     const goBack = () => {
@@ -57,7 +57,7 @@ const Registration = () => {
 
                 { showSuccessMsg ? <>
                     <h2>Thank You!</h2>
-                    <p>Your registration has been received please check you email for next steps.</p>
+                    <p>Your registration has been received please check your email for next steps.</p>
                         <Button
                             variant="contained"
                             color="primary"
