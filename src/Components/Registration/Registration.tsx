@@ -16,6 +16,7 @@ const Registration = () => {
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
+        /// id make api call here and update the state with the return
     }
 
     const onReset = (): void => {
@@ -28,10 +29,6 @@ const Registration = () => {
             ...prev,
             [name]: value
         }));
-    }
-
-    const onSubmit = () => {
-        /// id make api call here and update the state with the return
     }
 
     return (
